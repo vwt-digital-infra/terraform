@@ -60,20 +60,10 @@ resource "azurerm_logic_app_standard" "app" {
   virtual_network_subnet_id  = var.integration_subnet_id
 }
 
-# First, create a check.zip with archive_file to check diffs (this step is required)
-# replacing this step by checking of deploy.zip created by local-exec doesn't work
-# because local-exec is not executed during 'plan' so it would take old deploy.zip
-data "archive_file" "check_zip" {
-  type        = "zip"
-  source_dir  = var.workflows_source_path
-  output_path = "${path.module}/files/check.zip"
-}
-
+# Safest way is to always zip the file, even if there are no changes, it ensures that portal changes do not affect deployment results
 resource "null_resource" "zip_logic_app" {
-  depends_on = [data.archive_file.check_zip]
-
   triggers = {
-    deploy = data.archive_file.check_zip.output_sha
+    always_run = timestamp()
   }
   # if check.zip file changes, create deploy.zip file
   provisioner "local-exec" {
@@ -89,26 +79,17 @@ resource "null_resource" "zip_logic_app" {
 # the file will not be accepted if the app setting does not exist. However, there is a small delay between
 # updating the logic app and the app settings being available. Therefore, we need to add a timeout to the
 # deployment to make sure the app settings are available before the deployment is started.
-
 resource "time_sleep" "wait_for_app_settings" {
   depends_on = [
     azurerm_logic_app_standard.app,
     null_resource.zip_logic_app
   ]
   create_duration = "${var.deployment_wait_timeout}s"
-
-  triggers = {
-    deploy = data.archive_file.check_zip.output_sha
-  }
 }
 
 # The first step is to ensure that the logic apps extension is installed
 resource "null_resource" "install-extension" {
   depends_on = [time_sleep.wait_for_app_settings]
-
-  triggers = {
-    deploy = data.archive_file.check_zip.output_sha
-  }
 
   provisioner "local-exec" {
     command = "az extension add --name logic"
@@ -120,10 +101,13 @@ data "azurerm_subscription" "current" {}
 
 # Then use the Azure CLI to start the deployment
 resource "null_resource" "deploy" {
-  depends_on = [null_resource.install-extension]
+  depends_on = [
+    null_resource.install-extension,
+    null_resource.zip_logic_app
+  ]
 
   triggers = {
-    deploy = data.archive_file.check_zip.output_sha
+    always_run = timestamp() # null_resource.zip_logic_app might not always actually change, trigger ensures the execution anyway
   }
 
   provisioner "local-exec" {
