@@ -102,11 +102,11 @@ data "azurerm_subscription" "current" {}
 # Then use the Azure CLI to start the deployment
 resource "null_resource" "deploy" {
   depends_on = [
-    null_resource.install-extension, 
+    null_resource.install-extension,
     null_resource.zip_logic_app
   ]
 
-   triggers = {
+  triggers = {
     always_run = timestamp() # null_resource.zip_logic_app might not always actually change, trigger ensures the execution anyway
   }
 
