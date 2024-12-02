@@ -26,9 +26,9 @@ resource "azurerm_monitor_metric_alert" "metric_alert" {
   description         = each.value.description
   severity            = each.value.severity
   enabled             = each.value.enabled
-  frequency           = each.value.frequency 
+  frequency           = each.value.frequency
   window_size         = each.value.window_size
-  
+
   criteria {
     metric_namespace = each.value.metric_namespace
     metric_name      = each.value.metric_name
