@@ -26,6 +26,8 @@ resource "azurerm_monitor_metric_alert" "metric_alert" {
   description         = each.value.description
   severity            = each.value.severity
   enabled             = each.value.enabled
+  frequency           = each.value.frequency
+  window_size         = each.value.window_size
 
   criteria {
     metric_namespace = each.value.metric_namespace
@@ -33,6 +35,15 @@ resource "azurerm_monitor_metric_alert" "metric_alert" {
     aggregation      = each.value.aggregation
     operator         = each.value.operator
     threshold        = each.value.threshold
+
+    dynamic "dimension" {
+      for_each = each.value.dimension != null ? each.value.dimension : []
+      content {
+        name     = dimension.value.name
+        operator = dimension.value.operator
+        values   = dimension.value.values
+      }
+    }
   }
 
   action {
