@@ -37,11 +37,11 @@ resource "azurerm_monitor_metric_alert" "metric_alert" {
     threshold        = each.value.threshold
 
     dynamic "dimension" {
-      for_each = each.value.dimension != null ? [1] : []
+      for_each = each.value.dimension != null ? each.value.dimension : []
       content {
-        name     = each.value.dimension.name
-        operator = each.value.dimension.operator
-        values   = each.value.dimension.values
+        name     = dimension.value.name
+        operator = dimension.value.operator
+        values   = dimension.value.values
       }
     }
   }

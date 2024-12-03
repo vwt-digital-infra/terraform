@@ -24,11 +24,11 @@ variable "monitoring_rules" {
     auto_mitigation_enabled = optional(bool)
     severity                = optional(number)
     enabled                 = optional(bool)
-    dimension = optional(object({
+    dimension = optional(list(object({
       name     = string,
       operator = string,
       values   = list(string)
-    }))
+    })))
   }))
   description = "A list of metricts we want to monitor. For details see https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/monitor_metric_alert#argument-reference"
   default     = []
