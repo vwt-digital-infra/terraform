@@ -114,3 +114,41 @@ resource "null_resource" "deploy" {
     command = "az logicapp deployment source config-zip --name ${var.logic_app_name} --resource-group ${var.resource_group_name} --subscription ${data.azurerm_subscription.current.display_name} --src ${path.module}/files/deploy.zip"
   }
 }
+
+data "azurerm_monitor_diagnostic_categories" "diagnostic_categories" {
+  count       = var.log_analytics_workspace_id == null ? 0 : 1
+  resource_id = azurerm_logic_app_standard.app.id
+}
+
+// Write logs and metrics to log analytics if specified
+resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting" {
+  count                      = var.log_analytics_workspace_id == null ? 0 : 1
+  name                       = "diag-${var.logic_app_name}"
+  target_resource_id         = azurerm_logic_app_standard.app.id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+
+  dynamic "enabled_log" {
+    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories[0].log_category_types
+
+    content {
+      category = enabled_log.value
+
+      retention_policy {
+        enabled = false
+      }
+    }
+  }
+
+  dynamic "metric" {
+    for_each = data.azurerm_monitor_diagnostic_categories.diagnostic_categories[0].metrics
+
+    content {
+      category = metric.value
+      enabled  = true
+
+      retention_policy {
+        enabled = false
+      }
+    }
+  }
+}
