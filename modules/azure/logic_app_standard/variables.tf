@@ -92,3 +92,9 @@ variable "logic_app_version" {
   description = "The runtime version associated with the Logic App."
   default     = "~4"
 }
+
+variable "log_analytics_workspace_id" {
+  type        = string
+  description = "Specifies the ID of a Log Analytics Workspace where diagnostics data should be sent."
+  default     = null
+}
