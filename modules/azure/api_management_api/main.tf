@@ -130,6 +130,11 @@ resource "azurerm_api_management_api_policy" "api_policy" {
         <claim name="iss" match="any">
           <value>${var.aad_settings.issuer}</value>
         </claim>
+        %{if var.role_assignment != null}
+          <claim name="roles" match="any">
+            <value>${var.role_assignment}</value>
+          </claim>
+        %{endif}
       </required-claims>
     </validate-jwt>
     %{if var.backend_type == "managed-identity"}
