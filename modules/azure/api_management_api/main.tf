@@ -133,12 +133,12 @@ resource "azurerm_api_management_api_policy" "api_policy" {
         %{if length(var.role_assignments) > 0}
           <claim name="roles" match="any">
             %{
-              for role in var.role_assignments
-            }
+  for role in var.role_assignments
+  }
               <value>${role}</value>
             %{
-              endfor
-            }
+  endfor
+}
           </claim>
         %{endif}
       </required-claims>
