@@ -130,9 +130,15 @@ resource "azurerm_api_management_api_policy" "api_policy" {
         <claim name="iss" match="any">
           <value>${var.aad_settings.issuer}</value>
         </claim>
-        %{if var.role_assignment != null}
+        %{if length(var.role_assignments) > 0}
           <claim name="roles" match="any">
-            <value>${var.role_assignment}</value>
+            %{
+  for role in var.role_assignments
+  }
+              <value>${role}</value>
+            %{
+  endfor
+}
           </claim>
         %{endif}
       </required-claims>
