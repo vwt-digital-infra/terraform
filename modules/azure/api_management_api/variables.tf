@@ -226,5 +226,5 @@ variable "custom_backend_policy" {
 variable "role_assignments" {
   type        = list(string)
   description = "Roles to validate in the JWT token's 'roles' claim for access control."
-  default     = null
+  default     = []
 }
