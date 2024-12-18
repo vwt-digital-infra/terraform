@@ -14,9 +14,9 @@ terraform {
 provider "azuread" {}
 
 resource "azuread_service_principal" "internal" {
-  for_each = toset([for assignment in var.assignments : assignment.client_id])
-  client_id = each.key
-  use_existing   = var.use_existing_service_principal
+  for_each     = toset([for assignment in var.assignments : assignment.client_id])
+  client_id    = each.key
+  use_existing = var.use_existing_service_principal
 }
 
 resource "azuread_app_role_assignment" "role_assignment" {
