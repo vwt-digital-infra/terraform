@@ -121,7 +121,13 @@ data "azurerm_monitor_diagnostic_categories" "diagnostic_categories" {
 }
 
 // Write logs and metrics to log analytics if specified
+// Needs to be done once the deployment is finished, because updating Diagnostic Settings leads to a restart of the Logic App
+// which causes the deployment to fail if it is not finished yet
 resource "azurerm_monitor_diagnostic_setting" "diagnostic_setting" {
+  depends_on = [
+    null_resource.deploy
+  ]
+
   count                      = var.log_analytics_workspace_id == null ? 0 : 1
   name                       = "diag-${var.logic_app_name}"
   target_resource_id         = azurerm_logic_app_standard.app.id
