@@ -20,6 +20,7 @@ resource "azurerm_servicebus_namespace" "service_bus" {
   location            = var.location
   resource_group_name = var.resource_group_name
   sku                 = var.sku
+  minimum_tls_version = var.minimum_tls_version
 }
 
 resource "azurerm_servicebus_namespace_authorization_rule" "authorization_rule" {
