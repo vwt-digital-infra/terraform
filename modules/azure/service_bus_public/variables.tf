@@ -37,6 +37,6 @@ variable "log_analytics_workspace_id" {
 
 variable "minimum_tls_version" {
   type        = string
-  description = "Specifies the minimum version of TLS to use (1.0 and 1.2 are deprecated from Feb 2025)"
+  description = "Specifies the minimum version of TLS to use (1.0 and 1.1 are deprecated from Feb 2025)"
   default     = "1.2"
 }
