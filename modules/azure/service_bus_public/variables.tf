@@ -34,3 +34,9 @@ variable "log_analytics_workspace_id" {
   description = "Specifies the ID of a Log Analytics Workspace where diagnostics data should be sent."
   default     = null
 }
+
+variable "minimum_tls_version" {
+  type        = string
+  description = "Specifies the minimum version of TLS to use (1.0 and 1.2 are deprecated from Feb 2025)"
+  default     = "1.2"
+}
