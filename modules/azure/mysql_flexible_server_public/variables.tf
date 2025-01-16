@@ -70,6 +70,36 @@ variable "admin_username" {
   description = "The administrator login username for the mysql server."
 }
 
+variable "entra_administrator_enabled" {
+  type        = bool
+  description = "Specifies whether or not Entra authentication is enabled for this MySQL Server"
+  default     = false
+}
+
+variable "entra_identity_id" {
+  type        = string
+  description = "The Entra identity id for the mysql server."
+  default     = null
+}
+
+variable "entra_login" {
+  type        = string
+  description = "The Entra administrator login username for the mysql server."
+  default     = null
+}
+
+variable "entra_object_id" {
+  type        = string
+  description = "The Entra object id for the mysql server."
+  default     = null
+}
+
+variable "entra_tenant_id" {
+  type        = string
+  description = "The Entra tenant id for the mysql server."
+  default     = null
+}
+
 variable "password_keeper" {
   type        = map(string)
   description = "Random map of strings, when changed the mysql admin password will rotate."
